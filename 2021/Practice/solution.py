@@ -15,6 +15,7 @@ import os
 from datetime import datetime
 from time import time
 from copy import copy
+import traceback
 
 import numpy as np
 
@@ -35,7 +36,8 @@ except Exception as e:
 try:
     from sean import sean_solution
 except Exception as e:
-    print(e, "in sean file")
+    print(e, "in sean file, printing traceback")
+    traceback.print_exc()
 
 
 def read_file(input_location):
@@ -59,7 +61,7 @@ def read_file(input_location):
         for i in range(M):
             vals = line_to_data(f.readline(), np_array=False, dtype=str)
             vals[0] = int(vals[0])
-            pizzas.append(vals[1:])
+            pizzas.append(list(set(vals[1:])))
 
         # M number of pizza
         # T2 number of 2 person teams
@@ -285,7 +287,7 @@ def setup_params():
 if __name__ == "__main__":
     """This is where most things you should change are."""
     # TODO Change the method here to the desired one
-    method = matheus_solution
+    method = sean_solution
 
     # TODO change this to be the actual filenames
     filenames = [

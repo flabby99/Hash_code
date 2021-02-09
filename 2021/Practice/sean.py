@@ -1,9 +1,9 @@
 import os
 import time
 import itertools
-import math
+import operator
 
-import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 # In case doing hyperparam opt
 try:
@@ -13,22 +13,54 @@ except:
 
 from utils import save_object
 from common import scorer
+from matheus import count_ingredients
 
-# TODO Put classes here that may be useful to store info in
 
-
-class General:
+class Pizza:
     """
     These is a template for a general class with some
     things which can be useful.
     """
 
-    def __init__(self, args, idx):
-        self.score = 0
+    def __init__(self, ingredients, idx, score):
+        self.score = score
         self.idx = idx
+        self.ingredients = ingredients
+        self.used = False
 
-    def __repr__(self):
-        return "Thing {} with properties".format(self.idx)
+    def to_string(self):
+        return " ".join(['"{}"'.format(v) for v in self.ingredients])
+
+    def cs_similarity(self, distance_mat):
+        row = distance_mat.getrow(self.idx).toarray().flatten()
+        return distance_mat.dot(row)
+
+    def find_matches(self, distance_mat, vectoriser, pizza_list, num_choices):
+        choices = [self]
+        idxs = []
+        for _ in range(num_choices - 1):
+            pizza = " ".join([p.to_string() for p in choices])
+            tf_val = vectoriser.transform([pizza,]).toarray().flatten()
+            distances = distance_mat.dot(tf_val)
+
+            best_distance, best_val = 1, -1
+            for i, val in enumerate(distances):
+                if pizza_list[i].used is False:
+                    if val <= best_distance:
+                        best_distance = val
+                        best_val = i
+                    if best_distance == 0:
+                        break
+
+            choices.append(pizza_list[best_val])
+            pizza_list[best_val].used = True
+            idxs.append(best_val)
+
+        return choices, idxs
+
+
+    def __str__(self):
+        return "Pizza {} with ingredients {}".format(self.idx, self.ingredients)
 
 
 def sean_solution(info, **kwargs):
@@ -47,15 +79,45 @@ def sean_solution(info, **kwargs):
 
     """
     # TODO main body part here - especially setup
+    M, T2, T3, T4, pizzas = info
+
+    ing = count_ingredients(pizzas)
+    pizza_list = [Pizza(p, i, sum([1 / ing[key] for key in p])) for i, p in enumerate(pizzas)]
+    pizza_list = sorted(
+        pizza_list, key=operator.attrgetter("score"), reverse=True
+    )
+
+    corpus = [p.to_string() for p in pizza_list]
+
+    vectoriser = TfidfVectorizer()
+    feature_mat = vectoriser.fit_transform(corpus)
+
+    t_dict = {4: T4, 3: T3, 2: T2}
 
     def objective(args):
         """Actually write the solution part here."""
-        # TODO Parse out the args if needed
-        val = args.get(["name", None])
+        ordering = args.get("ordering", [4, 3, 2])
 
-        # TODO Solve the thing here
-        solution = 0
-        score = 0
+        choices = []
+        total_used = 0
+        curr_pizza = 0
+        for o in ordering:
+            for _ in range(t_dict[o]):
+                if total_used + o > M:
+                    break
+                for val in range(curr_pizza, len(pizza_list)):
+                    if pizza_list[val].used is False:
+                        curr_pizza = val
+                        pizza_list[curr_pizza].used = True
+                        break
+                matches, idxs = pizza_list[curr_pizza].find_matches(feature_mat, vectoriser, pizza_list, num_choices=o)
+                choices.append([o, ] + [m.idx for m in matches])
+                total_used += o
+                for m in idxs:
+                    pizza_list[m].used = True
+
+        solution = choices
+        score = scorer(solution, info)
 
         # Return something flexible that can be used with hyperopt
         # Main point is that it has score and solution.
