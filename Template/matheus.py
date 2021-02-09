@@ -1,7 +1,7 @@
 # TODO import your packages
 
 
-def matheus_solution(info, **kwargs):
+def matheus_solution(input_info, **kwargs):
     # TODO write your solution here!
 
     # TODO Parse any parameters you need

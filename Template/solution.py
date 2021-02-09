@@ -15,6 +15,7 @@ import os
 from datetime import datetime
 from time import time
 from copy import copy
+import traceback
 
 import numpy as np
 
@@ -27,15 +28,18 @@ from hyper_params import return_hyperparam_list
 try:
     from matheus import matheus_solution
 except Exception as e:
-    print(e, "in matheus file")
+    print(e, "occurred in matheus file, printing trace:")
+    traceback.print_exc()
 try:
     from ham import ham_solution
 except Exception as e:
-    print(e, "in ham file")
+    print(e, "occurred in ham file, printing trace:")
+    traceback.print_exc()
 try:
     from sean import sean_solution
 except Exception as e:
-    print(e, "in sean file")
+    print(e, "occurred in sean file, printing trace:")
+    traceback.print_exc()
 
 
 def read_file(input_location):
@@ -49,15 +53,16 @@ def read_file(input_location):
 
     Returns
     -------
-    None
+    input_info : object
+        The information from the problem.
 
     """
     with open(input_location, "r") as f:
         # TODO these should read the correct stuff
         A, B = line_to_data(f.readline(), np_array=False, dtype=int)
         C = line_to_data(f.readline(), dtype=float)
-        info = (A, B, C)
-    return info
+        input_info = (A, B, C)
+    return input_info
 
 
 def write_file(output_location, solution):
@@ -91,7 +96,9 @@ def print_solution(solution):
     Or the max number of rides assigned to a taxi.
     """
     # TODO print actually useful things, like summary information.
-    print("\tSolution is: {}".format(solution))
+    # print("\tSolution is: {}".format(solution))
+    print("\tCan print solution information")
+    return
 
 
 def run(input_location, output_location, method, **kwargs):
@@ -116,8 +123,8 @@ def run(input_location, output_location, method, **kwargs):
 
     """
     start_time = time()
-    info = read_file(input_location)
-    solution, score = method(info, **kwargs)
+    input_info = read_file(input_location)
+    solution, score = method(input_info, **kwargs)
     write_file(output_location, solution)
     print("\tCompleted in {:.2f} seconds".format(time() - start_time))
     print_solution(solution)
@@ -225,7 +232,7 @@ def main(method, filenames, parameter_list, skip, seed):
         print(last_str)
 
 
-def setup_params():
+def setup_params(filenames):
     """
     Here you can set up specific parameters for each file in filenames.
 
@@ -260,18 +267,18 @@ def setup_params():
 if __name__ == "__main__":
     """This is where most things you should change are."""
     # TODO Change the method here to the desired one
-    method = sean_solution
+    main_method = sean_solution
 
     # TODO change this to be the actual filenames
-    filenames = ["x.in", "y.in", "z.in", "w.in", "u.in"]
+    main_filenames = ["x.in", "y.in", "z.in", "w.in", "u.in"]
 
     # TODO Indicate which files to run
-    skip = [False, False, False, False, False]
+    main_skip = [False, False, False, False, False]
 
     # TODO Set the random seed for reproducibility
-    seed = 1
+    main_seed = 1
 
     # TODO inside of setup_params you can change parameters for specific files.
-    param_list = setup_params()
+    main_param_list = setup_params(main_filenames)
 
-    main(method, filenames, param_list, skip, seed)
+    main(main_method, main_filenames, main_param_list, main_skip, main_seed)

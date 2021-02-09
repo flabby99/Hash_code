@@ -10,10 +10,10 @@ from solution import print_solution
 from sean import sean_solution
 
 
-def test_method(method, info, **kwargs):
+def test_method(method, input_info, **kwargs):
     """Can be used to test a method with particular values."""
     start_time = time()
-    solution = method(info, **kwargs)
+    solution = method(input_info, **kwargs)
     print("\tCompleted in {} seconds".format(time() - start_time))
     print_solution(solution)
 

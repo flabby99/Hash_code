@@ -28,7 +28,7 @@ class General:
         return "Thing {} with properties".format(self.idx)
 
 
-def sean_solution(info, **kwargs):
+def sean_solution(input_info, **kwargs):
     """
     This solution is designed to be performed as follows:
     1.  Setup anything, such as arrays or sorting.

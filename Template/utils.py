@@ -77,7 +77,7 @@ def add_params(l, name, values):
         values = [values] * len(l)
     if len(l) != len(values):
         raise ValueError(
-            "Enequal length lists in add_params {} {}".format(len(l), len(values))
+            "Unequal length lists in add_params {} {}".format(len(l), len(values))
         )
     for i, val in enumerate(values):
         l[i][name] = val
@@ -88,5 +88,5 @@ if __name__ == "__main__":
     """Can be run here to look at Trial data."""
     here = os.path.dirname(os.path.realpath(__file__))
     dirname = "00-14-11"
-    in_dir = os.path.join(here, "outputs", dirname)
-    print_trial_info(in_dir)
+    main_in_dir = os.path.join(here, "outputs", dirname)
+    print_trial_info(main_in_dir)
