@@ -58,7 +58,6 @@ class Pizza:
 
         return choices, idxs
 
-
     def __str__(self):
         return "Pizza {} with ingredients {}".format(self.idx, self.ingredients)
 
@@ -82,10 +81,10 @@ def sean_solution(info, **kwargs):
     M, T2, T3, T4, pizzas = info
 
     ing = count_ingredients(pizzas)
-    pizza_list = [Pizza(p, i, sum([1 / ing[key] for key in p])) for i, p in enumerate(pizzas)]
-    pizza_list = sorted(
-        pizza_list, key=operator.attrgetter("score"), reverse=True
-    )
+    pizza_list = [
+        Pizza(p, i, sum([1 / ing[key] for key in p])) for i, p in enumerate(pizzas)
+    ]
+    pizza_list = sorted(pizza_list, key=operator.attrgetter("score"), reverse=True)
 
     corpus = [p.to_string() for p in pizza_list]
 
@@ -110,8 +109,10 @@ def sean_solution(info, **kwargs):
                         curr_pizza = val
                         pizza_list[curr_pizza].used = True
                         break
-                matches, idxs = pizza_list[curr_pizza].find_matches(feature_mat, vectoriser, pizza_list, num_choices=o)
-                choices.append([o, ] + [m.idx for m in matches])
+                matches, idxs = pizza_list[curr_pizza].find_matches(
+                    feature_mat, vectoriser, pizza_list, num_choices=o
+                )
+                choices.append([o,] + [m.idx for m in matches])
                 total_used += o
                 for m in idxs:
                     pizza_list[m].used = True
