@@ -42,6 +42,8 @@ except Exception as e:
     print(e, "occurred in sean file, printing trace:")
     traceback.print_exc()
 
+from common import dumb_solution
+
 
 def read_file(input_location):
     """
@@ -253,7 +255,7 @@ def main(method, filenames, parameter_list, skip, seed):
                 )
             )
             output_location = os.path.join(
-                out_dir, os.path.basename(input_location[:-3]) + ".out"
+                out_dir, os.path.basename(input_location[:-4]) + ".out"
             )
 
             # TODO Put anything which may be useful to all solutions here
@@ -309,22 +311,13 @@ def setup_params(filenames):
 if __name__ == "__main__":
     """This is where most things you should change are."""
     # TODO Change the method here to the desired one
-    main_method = sean_solution
+    main_method = dumb_solution
 
     # TODO change this to be the actual filenames
     main_filenames = ["a.txt", "b.txt", "c.txt", "d.txt", "e.txt", "f.txt"]
 
     # TODO Indicate which files to run
     main_skip = [False, False, False, False, False, False]
-
-    # TODO Set the random seed for reproducibility
-    main_seed = 1
-
-    # TODO inside of setup_params you can change parameters for specific files.
-    main_param_list = setup_params(main_filenames)
-
-    main(main_method, main_filenames, main_param_list, main_skip, main_seed)
-
 
     # TODO Set the random seed for reproducibility
     main_seed = 1
