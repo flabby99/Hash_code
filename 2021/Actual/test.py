@@ -8,6 +8,7 @@ from time import time
 
 from solution import print_solution
 from sean import sean_solution
+from solution import write_file
 
 
 def test_method(method, input_info, **kwargs):
@@ -17,6 +18,15 @@ def test_method(method, input_info, **kwargs):
     print("\tCompleted in {} seconds".format(time() - start_time))
     print_solution(solution)
 
+
+def test_file_writer():
+    to_write = [
+        [1, 2, ("rue-d-athenes", 2), ("rue-d-amsterdam", 1)],
+        [0, 1, ("rue-de-londres", 2)],
+        [2, 1, ("rue-de-moscou", 1)]
+    ]
+    write_location = "test_out.txt"
+    write_file(write_location, to_write)
 
 def test_opt():
     def objective(args):
@@ -48,4 +58,5 @@ def test_opt():
 if __name__ == "__main__":
     # info = []
     # test_method(sean_solution, info)
-    test_opt()
+    # test_opt()
+    test_file_writer()

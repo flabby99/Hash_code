@@ -16,6 +16,7 @@ from datetime import datetime
 from time import time
 from copy import copy
 import traceback
+from pprint import pprint
 
 import numpy as np
 
@@ -31,7 +32,7 @@ except Exception as e:
     print(e, "occurred in matheus file, printing trace:")
     traceback.print_exc()
 try:
-    from ronaldo import ham_solution
+    from ronaldo import ronaldo_solution
 except Exception as e:
     print(e, "occurred in ham file, printing trace:")
     traceback.print_exc()
@@ -58,10 +59,37 @@ def read_file(input_location):
 
     """
     with open(input_location, "r") as f:
-        # TODO these should read the correct stuff
-        A, B = line_to_data(f.readline(), np_array=False, dtype=int)
-        C = line_to_data(f.readline(), dtype=float)
-        input_info = (A, B, C)
+        # Line 1 - D I S V F, all int
+        # D - duration, I - num intersections, S - num streets
+        # V - num cars, F - bonus score for cars reaching destination
+        D, I, S, V, F = line_to_data(f.readline(), np_array=False, dtype=int)
+        
+        # Next S lines contain descriptions of the streets
+        street_info = []
+        for _ in range(S):
+        # line: B E NAME L
+        # B, E - intersections at start and end of street
+        # Name - string consisting of between 3 and 30
+        # L - the time it takes a car to traverse the street
+            B, E, S_Name, L = line_to_data(f.readline(), np_array=False, dtype=str)
+            B = int(B)
+            E = int(E)
+            L = int(L)
+            street_info.append([B, E, S_Name, L])
+
+        # Next V lines describe the paths of each car
+        # line: P P_names
+        # P - the number of streets the car needs to travel
+        # Space separated names of the streets in order (P of these)
+        car_info = []
+        for _ in range(V):
+            line_info = line_to_data(f.readline(), np_array=False, dtype=str)
+            P = int(line_info[0])
+            line_info = [P,] + line_info[1:]
+            car_info.append(line_info)
+    
+        input_info = (D, I, S, V, F, street_info, car_info)
+
     return input_info
 
 
@@ -82,10 +110,24 @@ def write_file(output_location, solution):
 
     """
     with open(output_location, "w") as f:
-        # TODO update with writing the correct stuff
+        # The first line integer A, the number of intersections scheduled
+
+        # Pass a list of intersection schedules
+
+        # For each of these A
+        # First line i - the ID of the intersection
+        # Second line E_i - the number of incoming streets in the schedule
+        # E_i lines (order and duration of green lights)
+        # StreetName T (how long this street will have a green light)
+
         f.write("{}\n".format(len(solution)))
         for val in solution:
-            f.write("{} ".format(int(val)))
+            ID_i, E_i = val[0], val[1]
+            f.write(f"{ID_i}\n{E_i}\n")
+            lights_info = val[2:]
+            for light in lights_info:
+                street_name, light_time = light
+                f.write(f"{street_name} {light_time}\n")    
 
 
 def print_solution(solution):
@@ -244,7 +286,7 @@ def setup_params(filenames):
     """
     # At the very least you must return this from the function,
     # A list of blank dictionaries.
-    param_list = [{}, {}, {}, {}, {}]
+    param_list = [{}, {}, {}, {}, {}, {}]
 
     # This holds which iteration of the main loop you are on
     # Can be useful to know in some circumstances.
@@ -270,10 +312,19 @@ if __name__ == "__main__":
     main_method = sean_solution
 
     # TODO change this to be the actual filenames
-    main_filenames = ["x.in", "y.in", "z.in", "w.in", "u.in"]
+    main_filenames = ["a.txt", "b.txt", "c.txt", "d.txt", "e.txt", "f.txt"]
 
     # TODO Indicate which files to run
-    main_skip = [False, False, False, False, False]
+    main_skip = [False, False, False, False, False, False]
+
+    # TODO Set the random seed for reproducibility
+    main_seed = 1
+
+    # TODO inside of setup_params you can change parameters for specific files.
+    main_param_list = setup_params(main_filenames)
+
+    main(main_method, main_filenames, main_param_list, main_skip, main_seed)
+
 
     # TODO Set the random seed for reproducibility
     main_seed = 1

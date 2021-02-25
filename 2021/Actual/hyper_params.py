@@ -11,4 +11,5 @@ def return_hyperparam_list():
     best3 = args
     best4 = args
     best5 = args
-    return [best1, best2, best3, best4, best5]
+    best6 = args
+    return [best1, best2, best3, best4, best5, best6]
