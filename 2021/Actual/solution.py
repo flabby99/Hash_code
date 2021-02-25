@@ -42,7 +42,7 @@ except Exception as e:
     print(e, "occurred in sean file, printing trace:")
     traceback.print_exc()
 
-from common import dumb_solution
+from common import dumb_solution, random_solution
 
 
 def read_file(input_location):
@@ -311,7 +311,7 @@ def setup_params(filenames):
 if __name__ == "__main__":
     """This is where most things you should change are."""
     # TODO Change the method here to the desired one
-    main_method = dumb_solution
+    main_method = random_solution
 
     # TODO change this to be the actual filenames
     main_filenames = ["a.txt", "b.txt", "c.txt", "d.txt", "e.txt", "f.txt"]
